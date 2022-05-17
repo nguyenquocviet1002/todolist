@@ -1,13 +1,14 @@
 import React from "react";
 
-function FilterButton() {
+function FilterButton(props) {
   return (
     <button
       type="button"
-      className="border border-current py-2 px-10 capitalize"
-      aria-pressed="true"
+      className="max-w-full w-full border border-current py-2 capitalize"
+      aria-pressed={props.isPressed}
+      onClick={() => props.setFilter(props.name)}
     >
-      <span>all</span>
+      <span>{props.name}</span>
     </button>
   );
 }
