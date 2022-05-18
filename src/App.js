@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { nanoid } from "nanoid";
 import FilterButton from "./components/FilterButton";
 import Form from "./components/Form";
@@ -7,6 +7,19 @@ import Todo from "./components/Todo";
 function App(props) {
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState("All");
+  function usePrevisions(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+  const prevTaskLength = usePrevisions(tasks.length);
+  useEffect(() => {
+    if (tasks.length - prevTaskLength === -1) {
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
   const FILTER_MAP = {
     All: () => true,
     Active: (task) => !task.completed,
@@ -35,8 +48,8 @@ function App(props) {
       ></Todo>
     );
   });
-  const tasksNoun = tasks.length !== 1 ? "tasks" : "task";
-  const headingText = `${tasks.length} ${tasksNoun} remaining`;
+  const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
+  const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
   function addTask(name) {
     const newTask = { id: "todo-" + nanoid(), name: name, completed: false };
@@ -50,7 +63,7 @@ function App(props) {
 
   function editTask(id, newName) {
     const editedTaskList = tasks.map((task) => {
-      if (id === tasks.id) {
+      if (id === task.id) {
         return { ...task, name: newName };
       }
       return task;
@@ -67,13 +80,16 @@ function App(props) {
     });
     setTasks(updateTasks);
   }
+  const listHeadingRef = useRef(null);
 
   return (
     <div className="bg-white w-1/3 h-full mx-auto mt-5 shadow-md p-10">
       <h1 className="text-3xl text-center font-semibold">Todo List</h1>
       <Form handelSubmit={addTask} />
       <div className="flex justify-center gap-2">{filterList}</div>
-      <h2>{headingText}</h2>
+      <h2 tabIndex="-1" ref={listHeadingRef}>
+        {headingText}
+      </h2>
       <ul>{taskList}</ul>
     </div>
   );
