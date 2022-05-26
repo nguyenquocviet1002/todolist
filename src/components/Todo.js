@@ -49,7 +49,7 @@ function Todo(props) {
           type="checkbox"
           className="w-[20px] h-[20px]"
           defaultChecked={props.completed}
-          onChange={() => props.toggleTaskComplete(props.id)}
+          onChange={() => props.toggleTaskComplete(props.id, props.completed)}
         />
         <label htmlFor={props.id} className="ml-2">
           {props.name}

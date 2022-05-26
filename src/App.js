@@ -1,11 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
-import { nanoid } from "nanoid";
 import FilterButton from "./components/FilterButton";
 import Form from "./components/Form";
 import Todo from "./components/Todo";
+import instance from "./api/ApiConfig";
 
-function App(props) {
-  const [tasks, setTasks] = useState(props.tasks);
+function App() {
+  const [tasks, setTasks] = useState([]);
+  useEffect(() => {
+    instance
+      .get("todo/")
+      .then((res) => {
+        setTasks(res.data);
+      })
+      .catch((err) => {});
+  }, []);
+
   const [filter, setFilter] = useState("All");
   function usePrevisions(value) {
     const ref = useRef();
@@ -45,40 +54,62 @@ function App(props) {
         deleteTask={deleteTask}
         editTask={editTask}
         toggleTaskComplete={toggleTaskComplete}
-      ></Todo>
+      />
     );
   });
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
   function addTask(name) {
-    const newTask = { id: "todo-" + nanoid(), name: name, completed: false };
-    setTasks([...tasks, newTask]);
+    const newTask = { name: name, completed: false };
+    instance
+      .post("todo/", newTask)
+      .then((res) => {
+        setTasks([...tasks, res.data]);
+      })
+      .catch((err) => {});
   }
 
   function deleteTask(id) {
-    const remainingTasks = tasks.filter((task) => id !== task.id);
-    setTasks(remainingTasks);
+    instance
+      .delete(`todo/${id}`)
+      .then((res) => {
+        const remainingTasks = tasks.filter((task) => res.data.id !== task.id);
+        setTasks(remainingTasks);
+      })
+      .catch((err) => {});
   }
 
   function editTask(id, newName) {
-    const editedTaskList = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, name: newName };
-      }
-      return task;
-    });
-    setTasks(editedTaskList);
+    const newTask = { name: newName };
+    instance
+      .put(`todo/${id}`, newTask)
+      .then((res) => {
+        const editedTaskList = tasks.map((task) => {
+          if (id === task.id) {
+            return { ...task, name: newName };
+          }
+          return task;
+        });
+        setTasks(editedTaskList);
+      })
+      .catch((err) => {});
   }
 
-  function toggleTaskComplete(id) {
-    const updateTasks = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, completed: !task.completed };
-      }
-      return { ...task };
-    });
-    setTasks(updateTasks);
+  function toggleTaskComplete(id, newCom) {
+    const newCompleted = { completed: !newCom };
+    instance
+      .put(`todo/${id}`, newCompleted)
+      .then((res) => {
+        const updateTasks = tasks.map((task) => {
+          if (id === task.id) {
+            return { ...task, completed: !task.completed };
+          }
+          return { ...task };
+        });
+        setTasks(updateTasks);
+      })
+      .catch((err) => {});
   }
   const listHeadingRef = useRef(null);
 
