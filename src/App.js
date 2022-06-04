@@ -114,14 +114,16 @@ function App() {
   const listHeadingRef = useRef(null);
 
   return (
-    <div className="bg-white w-1/3 h-full mx-auto mt-5 shadow-md p-10">
-      <h1 className="text-3xl text-center font-semibold">Todo List</h1>
-      <Form handelSubmit={addTask} />
-      <div className="flex justify-center gap-2">{filterList}</div>
-      <h2 tabIndex="-1" ref={listHeadingRef}>
-        {headingText}
-      </h2>
-      <ul>{taskList}</ul>
+    <div>
+      <div className="bg-white w-1/3 h-full mx-auto mt-5 shadow-md p-10">
+        <h1 className="text-3xl text-center font-semibold">Todo List</h1>
+        <Form handelSubmit={addTask} />
+        <div className="flex justify-center gap-2">{filterList}</div>
+        <h2 tabIndex="-1" ref={listHeadingRef}>
+          {headingText}
+        </h2>
+        <ul>{taskList}</ul>
+      </div>
     </div>
   );
 }

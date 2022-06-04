@@ -4,12 +4,21 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import Home from "./pages/Home";
+import Header from "./components/Header";
+import { GoogleAuthProvider } from "./common/Auth";
+import PrivateRouter from "./common/RouterPrivate";
+import PublicRouter from "./common/RouterPublic";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <GoogleAuthProvider>
+    <BrowserRouter>
+      <Header />
+      <PrivateRouter path="/todo" element={<App />} />
+      <PublicRouter path="/" element={<Home />} />
+    </BrowserRouter>
+  </GoogleAuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
